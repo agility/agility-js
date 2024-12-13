@@ -58,7 +58,7 @@ const defaultConfig: Config = {
 };
 
 
-function buildBaseUrl(guid: string) {
+function buildBaseUrl(guid: string, region?: "ca" | "eu" | "us" | "aus" | "dev") {
 
 	let baseUrlSuffixes = {
 		u: '',
@@ -70,14 +70,19 @@ function buildBaseUrl(guid: string) {
 
 	let suffix = guid.substr(guid.length - 2, 2);
 	let env = suffix.substr(1);
+
+	// If we're overriding the region
+	if (region){
+		return region === "us" ? `https://api.aglty.io/${guid}` : `https://api-${region}.aglty.io/${guid}`
+	}
+
 	// New format of guid
 	if (suffix.startsWith('-') && baseUrlSuffixes.hasOwnProperty(env)) {
 		return `https://api${baseUrlSuffixes[env]}.aglty.io/${guid}`
 	}
-	else {
-		//use default url
-		return `https://${guid}-api.agilitycms.cloud`;
-	}
+
+	//use default url
+	return `https://${guid}-api.agilitycms.cloud`;
 }
 
 function validateConfigParams(configParams: Config) {
@@ -124,7 +129,7 @@ class ApiClient {
 
 		//compute the base Url
 		if (!config.baseUrl) {
-			config.baseUrl = buildBaseUrl(config?.guid || '');
+			config.baseUrl = buildBaseUrl(config?.guid || '', config?.region);
 		} else {
 			//we are using a custom url, make sure we include the guid in the headers
 			config.requiresGuidInHeaders = true;
