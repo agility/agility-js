@@ -6,6 +6,11 @@ export interface Config {
   baseUrl?: string | null;
 
   /**
+    * Optional region for those guids which are missing a region. Use this to override.
+    */
+  region?: "ca" | "eu" | "us" | "aus" | "dev"
+
+  /**
    * If true, the API will use the Preview API.  If false, it will use the Fetch API. Default is false.
    * Make sure the API Key provided matches this value.
    */
